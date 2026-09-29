@@ -1,5 +1,10 @@
 # Implementation Notes
 
+
+## Screens and State
+
+The application has two main screens: a Change Request list and a Change Request detail page. The list loads Change Requests for the current user and handles loading, loaded, empty, and error states, with a status filter for narrowing the displayed requests. The detail page loads one Change Request and shows its proposed changes, totals, and approval timeline. Approve and Reject actions should depend on both the Change Request status and the current user's permissions, and the UI should handle loading and API errors clearly.
+
 > Fill this in as part of your submission. 1–2 pages, bullet points are fine. Delete these
 > instructions before submitting.
 
