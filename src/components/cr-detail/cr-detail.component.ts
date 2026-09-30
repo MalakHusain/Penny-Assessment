@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CrApiService } from '../../api/cr-api.service';
@@ -20,8 +20,8 @@ import { canApprovePolicy } from '../../common/permissions';
 	imports: [CommonModule, ReactiveFormsModule],
 	templateUrl: './cr-detail.component.html',
 })
-export class CrDetailComponent implements OnInit {
-	@Input() id!: string;
+export class CrDetailComponent implements OnInit, OnChanges {
+		@Input() id!: string;
 
 	state: ViewState<CrDetail> = idle();
 	submitting = false;
@@ -34,6 +34,12 @@ export class CrDetailComponent implements OnInit {
 	ngOnInit(): void {
 		void this.load();
 	}
+	
+	ngOnChanges(changes: SimpleChanges): void {
+    if (changes['id'] && !changes['id'].firstChange) {
+        void this.load();
+    }
+}
 
 	async load(): Promise<void> {
 		this.state = loading();
@@ -56,9 +62,10 @@ export class CrDetailComponent implements OnInit {
 
 	/** Approval timeline, oldest-first. */
 	get timeline(): TimelineEntry[] {
-		// TODO: return the audit entries ordered chronologically (oldest first).
-		return this.detail?.audit ?? [];
-	}
+    return [...(this.detail?.audit ?? [])].sort(
+        (a, b) => new Date(a.at).getTime() - new Date(b.at).getTime()
+    );
+    }
 
 	/** Whether the current user may approve the loaded CR. */
 	get canApprove(): boolean {
