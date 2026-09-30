@@ -21,4 +21,15 @@ describe('computeDiff', () => {
 		const rows = computeDiff(base, [{ ...base[0], quantity: 11 }, base[1]]);
 		expect(rows.find((r) => r.sku === 'SKU-A')?.kind).toBe('changed');
 	});
+	it('detects an unchanged item', () => {
+		const rows = computeDiff(base, [...base]);
+
+		expect(rows.find((r) => r.sku === 'SKU-A')?.kind).toBe('unchanged');
+	});
+
+	it('detects a description-only change as changed', () => {
+		const rows = computeDiff(base, [{ ...base[0], description: 'Widget A - new supplier' }, base[1]]);
+
+		expect(rows.find((r) => r.sku === 'SKU-A')?.kind).toBe('changed');
+	});
 });
